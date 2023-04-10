@@ -11,7 +11,6 @@ import modele.environnement.CaseCultivable;
 import modele.environnement.CaseNonCultivable;
 
 import java.awt.Point;
-import java.util.Random;
 
 
 public class SimulateurPotager {
@@ -20,15 +19,17 @@ public class SimulateurPotager {
     public static final int SIZE_Y = 10;
 
     private SimulateurMeteo simMet;
+    private Minuteur minuteur;
 
     // private HashMap<Case, Point> map = new  HashMap<Case, Point>(); // permet de récupérer la position d'une entité à partir de sa référence
     private Case[][] grilleCases = new Case[SIZE_X][SIZE_Y]; // permet de récupérer une entité à partir de ses coordonnées
 
-    public SimulateurPotager() {
+    public SimulateurPotager() 
+    {
 
+        simMet = new SimulateurMeteo();
         initialisationDesEntites();
-
-        simMet = new SimulateurMeteo(this);
+        minuteur = new Minuteur();
 
     }
 
@@ -42,50 +43,41 @@ public class SimulateurPotager {
 
         // murs extérieurs horizontaux
         for (int x = 0; x < 20; x++) {
-            addEntite(new CaseNonCultivable(this), x, 0);
-            addEntite(new CaseNonCultivable(this), x, 9);
+            addEntite(new CaseNonCultivable(), x, 0);
+            addEntite(new CaseNonCultivable(), x, 9);
         }
 
         // murs extérieurs verticaux
         for (int y = 0; y < 9; y++) {
-            addEntite(new CaseNonCultivable(this), 0, y);
-            addEntite(new CaseNonCultivable(this), 19, y);
+            addEntite(new CaseNonCultivable(), 0, y);
+            addEntite(new CaseNonCultivable(), 19, y);
         }
 
-        addEntite(new CaseNonCultivable(this), 2, 6);
-        addEntite(new CaseNonCultivable(this), 3, 6);
-
-        Random rnd = new Random();
+        addEntite(new CaseNonCultivable(), 2, 6);
+        addEntite(new CaseNonCultivable(), 3, 6);
 
         for (int x = 5; x < 15; x++) {
             for (int y = 3; y < 7; y++) {
-                CaseCultivable cc = new CaseCultivable(this);
+                CaseCultivable cc = new CaseCultivable(simMet.get_humidite());
                 addEntite(cc , x, y);
-                if (rnd.nextBoolean()) {
-                    cc.actionUtilisateur();
-                }
-
-                Ordonnanceur.getOrdonnanceur().add(cc);
+                minuteur.add_subscriber(cc);
 
             }
         }
 
     }
 
-    public void actionUtilisateur(int x, int y) {
-        if (grilleCases[x][y] != null) {
-            grilleCases[x][y].actionUtilisateur();
-        }
-    }
+    
 
-    private void addEntite(Case e, int x, int y) {
+    private void addEntite(Case e, int x, int y) 
+    {
         grilleCases[x][y] = e;
         //map.put(e, new Point(x, y));
     }
 
 
-    private Case objetALaPosition(Point p) {
-        Case retour = null;
+    private Case objetALaPosition(Point p) 
+    {
         return grilleCases[p.x][p.y];
     }
 

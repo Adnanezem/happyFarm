@@ -1,5 +1,6 @@
 package modele.environnement.varietes;
 
-public enum Varietes {
-    salade, carrotte
+public enum Varietes 
+{
+    SALADE , CAROTTE, PATATE , COURGETTE , POMME , PASTEQUE , RAISIN , TOMATE
 }

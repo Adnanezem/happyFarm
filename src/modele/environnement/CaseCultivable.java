@@ -1,34 +1,31 @@
 package modele.environnement;
 
 import modele.SimulateurPotager;
-import modele.environnement.varietes.Legume;
-import modele.environnement.varietes.Salade;
+import modele.environnement.varietes.Plante;
+import modele.environnement.varietes.Varietes;
 
-public class CaseCultivable extends Case {
-
-    private Legume legume;
-    public CaseCultivable(SimulateurPotager _simulateurPotager) {
-        super(_simulateurPotager);
+public class CaseCultivable extends Case
+{
+    private Plante plante;
+    
+    public CaseCultivable(int _humidite)
+    {
+        super(_humidite);
+    }
+    public Plante get_plante() 
+    {
+        return plante;
     }
 
-    @Override
-    public void actionUtilisateur() {
-        if (legume == null) {
-            legume = new Salade();
 
-        } else {
-            legume = null;
+
+    public void update()
+    {
+        if(plante != null)
+        {
+            plante.nextStep();
         }
     }
 
-    public Legume getLegume() {
-        return legume;
-    }
-
-    @Override
-    public void run() {
-        if (legume != null) {
-            legume.nextStep();
-        }
-    }
+    
 }

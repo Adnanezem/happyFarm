@@ -2,18 +2,14 @@ package modele.environnement;
 
 import modele.SimulateurPotager;
 
-public class CaseNonCultivable extends Case {
-    public CaseNonCultivable(SimulateurPotager _simulateurPotager) {
-        super(_simulateurPotager);
+public class CaseNonCultivable extends Case
+{
+    public CaseNonCultivable()
+    {
+        super(0);
     }
-
-    @Override
-    public void actionUtilisateur() {
-        // TODO
-    }
-
-    @Override
-    public void run() {
-        // TODO
+    public void update()
+    {
+        return;
     }
 }

@@ -1,14 +1,17 @@
 package modele.environnement.varietes;
 
-public class Carrotte extends Legume {
+public class Carrotte extends Plante 
+{
 
     @Override
-    public Varietes getVariete() {
-        return Varietes.carrotte;
+    public Varietes getVariete() 
+    {
+        return Varietes.CAROTTE;
     }
 
     @Override
-    protected void croissance() {
-        // TODO
+    protected void croissance() 
+    {
+        
     }
 }

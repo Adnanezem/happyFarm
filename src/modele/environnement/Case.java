@@ -11,4 +11,4 @@ public abstract class Case implements Subscriber
       humidite = _humidite;
     }
 
-  }
+}

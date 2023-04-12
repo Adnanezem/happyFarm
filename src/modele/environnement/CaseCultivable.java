@@ -17,8 +17,6 @@ public class CaseCultivable extends Case
         return plante;
     }
 
-
-
     public void update()
     {
         if(plante != null)
@@ -26,6 +24,9 @@ public class CaseCultivable extends Case
             plante.nextStep();
         }
     }
-
+    public void planter()
+    {
+        
+    }
     
 }

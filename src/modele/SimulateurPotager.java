@@ -13,33 +13,31 @@ import modele.environnement.CaseNonCultivable;
 import java.awt.Point;
 
 
-public class SimulateurPotager {
+public class SimulateurPotager 
+{
 
     public static final int SIZE_X = 20;
     public static final int SIZE_Y = 10;
 
-    private SimulateurMeteo simMet;
-    private Minuteur minuteur;
 
     // private HashMap<Case, Point> map = new  HashMap<Case, Point>(); // permet de récupérer la position d'une entité à partir de sa référence
     private Case[][] grilleCases = new Case[SIZE_X][SIZE_Y]; // permet de récupérer une entité à partir de ses coordonnées
 
-    public SimulateurPotager() 
+    public SimulateurPotager(Minuteur minuteur, int humidite_initial) 
     {
-
-        simMet = new SimulateurMeteo();
-        initialisationDesEntites();
-        minuteur = new Minuteur();
+        init_tiles(minuteur , humidite_initial);
 
     }
 
 
     
-    public Case[][] getPlateau() {
+    public Case[][] getPlateau() 
+    {
         return grilleCases;
     }
     
-    private void initialisationDesEntites() {
+    private void init_tiles(Minuteur minuteur, int humidite_initial) 
+    {
 
         // murs extérieurs horizontaux
         for (int x = 0; x < 20; x++) {
@@ -56,9 +54,11 @@ public class SimulateurPotager {
         addEntite(new CaseNonCultivable(), 2, 6);
         addEntite(new CaseNonCultivable(), 3, 6);
 
-        for (int x = 5; x < 15; x++) {
-            for (int y = 3; y < 7; y++) {
-                CaseCultivable cc = new CaseCultivable(simMet.get_humidite());
+        for (int x = 5; x < 15; x++) 
+        {
+            for (int y = 3; y < 7; y++) 
+            {
+                CaseCultivable cc = new CaseCultivable(humidite_initial);
                 addEntite(cc , x, y);
                 minuteur.add_subscriber(cc);
 
@@ -72,7 +72,6 @@ public class SimulateurPotager {
     private void addEntite(Case e, int x, int y) 
     {
         grilleCases[x][y] = e;
-        //map.put(e, new Point(x, y));
     }
 
 

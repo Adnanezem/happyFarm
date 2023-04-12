@@ -1,6 +1,7 @@
-package modele.item;
+package modele.item.Graines;
 
 import modele.environnement.varietes.Varietes;
+import modele.item.Item;
 
 public class Graines extends Item 
 {
@@ -10,4 +11,9 @@ public class Graines extends Item
         super( _quantite,  _prix_achat,  _prix_vente);
         variete = _variete;
     }    
+
+    public Varietes get_variete()
+    {
+        return variete;
+    }
 }

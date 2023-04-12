@@ -1,22 +1,29 @@
 package modele.item.outils;
-
-public abstract class Outil 
+import modele.item.Item;
+public abstract class Outil extends Item
 {
-    private Instrument type;
-    private float durabilte;
-    public Outil(Instrument _type)
+    protected Instrument type;
+    protected float durabilite;
+    protected float deterioration_factor;
+    public Outil(int _quantite, int _prix_achat, int _prix_vente,Instrument _type )
     {
+        super( _quantite, _prix_achat, _prix_vente);
         type = _type;
-        durabilte = 100
+        durabilite = 100;
     }
 
-    public get_durabilite()
+    public float get_durabilite()
     {
-        return durabilte;
+        return durabilite;
     }
-
-    public void utiliser()
+    void utiliser()
     {
-
+        if(durabilite == 0) return;
+        durabilite -= deterioration_factor;
+        if(durabilite <= 0)
+        {
+            durabilite = 0;
+        }
     }
+
 }

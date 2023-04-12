@@ -1,6 +1,7 @@
 package modele.item;
 
-public abstract class Item {
+public abstract class Item 
+{
     private int quantite;
     private int prix_vente;
     private int prix_achat;
@@ -11,13 +12,22 @@ public abstract class Item {
         prix_vente = _prix_vente;
     }
 
-    void ajouter_quantite(int q)
+    public void ajouter_quantite(int q)
     {
         quantite += q;
     }
-    void baisser_quantiter(int q)
+    public void baisser_quantiter(int q)
     {
         quantite -= q;
+    }
+
+    public int get_prix_vente()
+    {
+        return prix_vente;
+    }
+    public int get_prix_achat()
+    {
+        return prix_achat;
     }
 
 }

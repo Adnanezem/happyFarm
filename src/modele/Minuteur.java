@@ -13,7 +13,7 @@ public class Minuteur implements Runnable
     private long time_step;
     private boolean pause;
 
-    public void Minuteur(long _time_step) 
+    public Minuteur(long _time_step) 
     {
         time_step = _time_step;
         pause = false;

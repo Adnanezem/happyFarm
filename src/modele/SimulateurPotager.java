@@ -58,7 +58,7 @@ public class SimulateurPotager
         {
             for (int y = 3; y < 7; y++) 
             {
-                CaseCultivable cc = new CaseCultivable(humidite_initial);
+                CaseCultivable cc = new CaseCultivable();
                 addEntite(cc , x, y);
                 minuteur.add_subscriber(cc);
 

@@ -1,9 +1,8 @@
 
 package modele.environnement;
 
-import modele.Subscriber;
 
-public abstract class Case implements Subscriber
+public abstract class Case
 {
     protected int humidite;
     public Case() 

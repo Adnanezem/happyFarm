@@ -1,4 +1,5 @@
 package modele.meteo;
+import modele.Minuteur;
 import modele.Subscriber;
 public class Date implements Subscriber 
 {
@@ -22,12 +23,13 @@ public class Date implements Subscriber
     private int day;
     private int heure;
     private int minute;
-    public Date()
+    public Date(Minuteur m)
     {
         season = Saison.AUTUMN;
         day = 1;
         heure = 8;
         minute = 0;
+        m.add_subscriber(this);
     }
 
     public void update()
@@ -154,5 +156,10 @@ public class Date implements Subscriber
             return DayTime.NOON_TIME;
         }
         return DayTime.NULL;
+    }
+
+    public Saison get_season()
+    {
+        return season;
     }
 }

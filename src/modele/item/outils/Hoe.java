@@ -2,9 +2,10 @@ package modele.item.outils;
 
 public class Hoe extends Outil 
 {
-    public Hoe( int _quantite, int _prix_achat, int _prix_vente, Instrument _type)
+    public Hoe( int _quantite, float _prix_achat)
     {
-        super( _quantite,  _prix_achat,  _prix_vente, _type);
+        super( _quantite,  _prix_achat);
+        type = Instrument.HOE;
         deterioration_factor = 2.5f;
     }  
     void Hoe_action()

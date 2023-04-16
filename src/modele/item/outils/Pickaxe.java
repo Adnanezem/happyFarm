@@ -2,9 +2,10 @@ package modele.item.outils;
 
 public class Pickaxe extends Outil
 {
-    public Pickaxe( int _quantite, int _prix_achat, int _prix_vente, Instrument _type)
+    public Pickaxe( int _quantite, float _prix_achat)
     {
-        super( _quantite,  _prix_achat,  _prix_vente, _type);
+        super( _quantite,  _prix_achat);
+        type = Instrument.PICKAXE;
         deterioration_factor = 1f;
     }  
 }

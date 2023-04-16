@@ -1,83 +1,161 @@
 package modele.meteo;
 import modele.Minuteur;
-import modele.SimulateurPotager;
 import modele.Subscriber;
 
 public class SimulateurMeteo implements Subscriber
 {
-    private int MORNING_TIME = 12;
-    private int NOON_TIME    = 18;
-    private int NIGHT_TIME   = 8;
     private int temperature;
     private int humidite;
-    private int ensolleillement;
-    private int day_time;
+    private int ensoleillement;
+    private boolean pluit = false;
+    private int rain_timer = 0;
     private boolean auto_simulate;
     private Date calendrier;
-    public SimulateurMeteo()
+    public SimulateurMeteo(Minuteur m)
     {
+
         temperature     = 20;
         humidite        = 50;
-        ensolleillement = 50;
-        day_time        = 8;
+        ensoleillement  = 50;
         auto_simulate   = true;
-        calendrier = new Date();
+        calendrier      = new Date(m);
+        m.add_subscriber(this);
     }
-    public SimulateurMeteo(int _temperature, int _humidite, int _ensolleiment ) 
+    public SimulateurMeteo(int _temperature, int _humidite, int _ensoleillement, Minuteur m ) 
     {
         temperature     = _temperature;
         humidite        = _humidite;
-        ensolleillement = _ensolleiment;
-        day_time        = 8;
+        ensoleillement  = _ensoleillement;
         auto_simulate   = true;
-        calendrier      = new Date();
+        calendrier      = new Date(m);
+        m.add_subscriber(this);
     }   
-    private void update_ensolleiment()
+    private void update_ensoleillement()
     {
         if(!auto_simulate) return;
-        if(day_time <= MORNING_TIME)
+        if(pluit) 
         {
-            ensolleillement = 70;
+            ensoleillement = 10;
+            return;
         }
-        else if(day_time <= NOON_TIME)
+        DayTime temp = calendrier.get_day_time();
+        if(temp == DayTime.MORNING_TIME)
         {
-            ensolleillement = 100;
+            ensoleillement = 70;
         }
-        else if(day_time <= NIGHT_TIME)
+        else if(temp == DayTime.NOON_TIME)
         {
-            ensolleillement = 10;
+            ensoleillement = 100;
+        }
+        else if(temp == DayTime.NIGHT_TIME)
+        {
+            ensoleillement = 10;
+        }
+        else
+        {
+            throw new IllegalArgumentException("Unknown DayTime: " + temp);
         }
     }
+    private void random_rain()
+    {
+        Saison current_season = calendrier.get_season();
+        double temp = Math.random() * ( 100 - 0 );
+        switch (current_season) {
+            case HIVER:
+                if(temp < 20)
+                {
+                    pluit = true;
+                    rain_timer = 15;
+                }
+                break;
+            case AUTUMN:
+                if(temp < 50)
+                {
+                    pluit = true;
+                    rain_timer = 10;
+                }
+                break;
+            case PRINTEMPS:
+                if(temp < 50)
+                {
+                    pluit = true;
+                    rain_timer = 25;
+                }
+                break;
+            case ETE:
+                if(temp < 80)
+                {
+                    pluit = true;
+                    rain_timer = 5;
+                }
+                break;        
+        
+            default:
+                throw new IllegalArgumentException("Unknown season: " + temp);
+                
+        }
+    }
+
+    private void update_rain()
+    {
+        if(pluit == true)
+        {
+            rain_timer --;
+            if(rain_timer == 0)
+            {
+                pluit = false;
+            }
+            return;
+        }
+        random_rain();
+    }
+
     private void update_humidite()
     {
         if(!auto_simulate) return;
-        if(day_time <= MORNING_TIME)
+        DayTime temp = calendrier.get_day_time();
+        int rain_bonus = 0;
+        if(pluit)
         {
-            humidite = 70;
+            rain_bonus = 50;
         }
-        else if(day_time <= NOON_TIME)
+        if(temp == DayTime.MORNING_TIME)
         {
-            humidite = 100;
+            humidite = 25 + rain_bonus;
         }
-        else if(day_time <= NIGHT_TIME)
+        else if(temp == DayTime.NOON_TIME)
         {
-            humidite = 10;
+            humidite = 10 + rain_bonus;
+        }
+        else if(temp == DayTime.NIGHT_TIME)
+        {
+            humidite = 30 + rain_bonus;
+        }
+        else
+        {
+            throw new IllegalArgumentException("Unknown DayTime: " + temp);
         }
     }
     private void update_temperature()
     {
         if(!auto_simulate) return;
-        if(day_time <= MORNING_TIME)
+        DayTime temp = calendrier.get_day_time();
+        int bonus_season = get_temperature_bonus_season(calendrier.get_season());
+        if(temp == DayTime.MORNING_TIME)
         {
-            temperature = 15;
+            temperature = 7 + bonus_season;
         }
-        else if(day_time <= NOON_TIME)
+        else if(temp == DayTime.NOON_TIME)
         {
-            temperature = 30;
+            temperature = 20 + bonus_season;
         }
-        else if(day_time <= NIGHT_TIME)
+        else if(temp == DayTime.NIGHT_TIME)
         {
-            temperature = 20;
+            temperature = 5 + bonus_season;
+        }
+        else
+        {
+            throw new IllegalArgumentException("Unknown DayTime: " + temp);
         }
     }
 
@@ -96,9 +174,27 @@ public class SimulateurMeteo implements Subscriber
 
     public void update()
     {
-
-        update_ensolleiment();
+        update_rain();
+        update_ensoleillement();
         update_humidite();
+        update_temperature();
+    }
+
+    private int get_temperature_bonus_season(Saison s)
+    {
+        switch (s) {
+            case HIVER:
+                return 0;
+            case AUTUMN : 
+                return 5;
+            case PRINTEMPS:
+                return 7;
+            case ETE :
+                return 12;
+            default:
+                break;
+        }
+        return 0;
     }
 
     public int get_temperature()
@@ -111,7 +207,31 @@ public class SimulateurMeteo implements Subscriber
     }
     public int get_ensolleillment()
     {
-        return ensolleillement;
+        return ensoleillement;
     }
 
+    public void set_temperature(int t)
+    {
+        if(auto_simulate)
+        {
+            throw new IllegalAccessError("auto simulation must be turned off");
+        }
+        temperature = t;
+    }
+    public void set_humidite(int t)
+    {
+        if(auto_simulate)
+        {
+            throw new IllegalAccessError("auto simulation must be turned off");
+        }
+        humidite = t;
+    }
+    public void set_ensoleillement(int t)
+    {
+        if(auto_simulate)
+        {
+            throw new IllegalAccessError("auto simulation must be turned off");
+        }
+        ensoleillement = t;
+    }
 }

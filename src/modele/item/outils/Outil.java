@@ -5,10 +5,9 @@ public abstract class Outil extends Item
     protected Instrument type;
     protected float durabilite;
     protected float deterioration_factor;
-    public Outil(int _quantite, int _prix_achat, int _prix_vente,Instrument _type )
+    public Outil(int _quantite, float _prix_achat)
     {
-        super( _quantite, _prix_achat, _prix_vente);
-        type = _type;
+        super( _quantite, _prix_achat);
         durabilite = 100;
     }
 

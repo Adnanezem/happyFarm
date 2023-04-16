@@ -5,11 +5,14 @@ public abstract class Plante
     public abstract Varietes getVariete();
     protected int niveau_croissance;
     protected EtatCroissance state;
+    
+
     public Plante()
     {
         niveau_croissance = 0;
         state = EtatCroissance.GERM;
     }
+    public abstract float get_prix();
     public void nextStep() 
     {
         croissance();

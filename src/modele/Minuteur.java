@@ -1,11 +1,7 @@
 package modele;
 
-
-import java.util.Vector;
 import java.util.List;
 import static java.lang.Thread.*;
-import modele.environnement.Case;
-import modele.Subscriber;
 
 public class Minuteur implements Runnable
 {
@@ -24,7 +20,7 @@ public class Minuteur implements Runnable
     {
         for(Subscriber s : subscribers)
         {
-            s.notify();
+            s.update();
         }
     }
 

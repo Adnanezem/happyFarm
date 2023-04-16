@@ -1,4 +1,6 @@
-package modele.environnement.varietes;
+package modele.environnement.plantes.legumes;
+
+import modele.environnement.plantes.Varietes;
 
 public class Salade extends Legume 
 {
@@ -11,6 +13,6 @@ public class Salade extends Legume
     @Override
     protected void croissance() 
     {
-        
+        niveau_croissance += 4;
     }
 }

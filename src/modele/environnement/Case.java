@@ -5,10 +5,10 @@ import modele.Subscriber;
 
 public abstract class Case implements Subscriber
 {
-    int humidite;
-    public Case(int _humidite) 
+    protected int humidite;
+    public Case() 
     {
-      humidite = _humidite;
+      humidite = 0;
     }
 
 }

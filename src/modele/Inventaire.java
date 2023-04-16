@@ -1,6 +1,7 @@
 package modele;
+import modele.environnement.plantes.Plante;
 import modele.item.Item;
-import modele.environnement.varietes.Plante;
+
 import java.util.Vector;
 public class Inventaire 
 {

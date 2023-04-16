@@ -1,16 +1,20 @@
 package modele.environnement;
 
-import modele.SimulateurPotager;
-import modele.environnement.varietes.Plante;
-import modele.environnement.varietes.Varietes;
+import modele.Subscriber;
 
-public class CaseCultivable extends Case
+import modele.SimulateurPotager;
+import modele.environnement.plantes.Plante;
+import modele.environnement.plantes.Varietes;
+
+public class CaseCultivable extends Case implements Subscriber
 {
     private Plante plante;
+    protected int fertilite;
     
-    public CaseCultivable(int _humidite)
+    public CaseCultivable()
     {
-        super(_humidite);
+        super();
+        fertilite = 5;
     }
     public Plante get_plante() 
     {
@@ -24,9 +28,9 @@ public class CaseCultivable extends Case
             plante.nextStep();
         }
     }
-    public void planter()
+    public void planter(Plante p)
     {
-        
+        plante = p;
     }
     
 }

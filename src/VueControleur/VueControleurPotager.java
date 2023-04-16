@@ -15,7 +15,7 @@ import javax.swing.*;
 
 import modele.SimulateurPotager;
 import modele.environnement.*;
-import modele.environnement.varietes.Legume;
+import modele.environnement.plantes.legumes.Legume;
 
 
 /** Cette classe a deux fonctions :

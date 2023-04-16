@@ -1,6 +1,6 @@
 package modele.item.Graines;
 
-import modele.environnement.varietes.Varietes;
+import modele.environnement.plantes.Varietes;
 import modele.item.Item;
 
 public class Graines extends Item 

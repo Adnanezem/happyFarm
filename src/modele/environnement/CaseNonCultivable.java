@@ -6,7 +6,7 @@ public class CaseNonCultivable extends Case
 {
     public CaseNonCultivable()
     {
-        super(0);
+        humidite = 0;
     }
     public void update()
     {

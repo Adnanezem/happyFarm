@@ -1,6 +1,7 @@
-package modele;
+package modele.meteo;
 import modele.Minuteur;
 import modele.SimulateurPotager;
+import modele.Subscriber;
 
 public class SimulateurMeteo implements Subscriber
 {
@@ -12,31 +13,25 @@ public class SimulateurMeteo implements Subscriber
     private int ensolleillement;
     private int day_time;
     private boolean auto_simulate;
+    private Date calendrier;
     public SimulateurMeteo()
     {
         temperature     = 20;
         humidite        = 50;
         ensolleillement = 50;
+        day_time        = 8;
+        auto_simulate   = true;
+        calendrier = new Date();
     }
-    public SimulateurMeteo(int _temperature, int _humidite, int _ensolleiment) 
+    public SimulateurMeteo(int _temperature, int _humidite, int _ensolleiment ) 
     {
         temperature     = _temperature;
         humidite        = _humidite;
         ensolleillement = _ensolleiment;
         day_time        = 8;
-        auto_simulate = true;
+        auto_simulate   = true;
+        calendrier      = new Date();
     }   
-    public SimulateurMeteo(int _temperature, int _humidite, int _ensolleiment, int _noon_time, int _morning_time, int _night_time) 
-    {
-        temperature     = _temperature;
-        humidite        = _humidite;
-        ensolleillement = _ensolleiment;
-        day_time        = 8;
-        MORNING_TIME    = _morning_time;
-        NOON_TIME       = _noon_time;
-        NIGHT_TIME      = _night_time;
-        auto_simulate = true;
-    } 
     private void update_ensolleiment()
     {
         if(!auto_simulate) return;
@@ -101,7 +96,7 @@ public class SimulateurMeteo implements Subscriber
 
     public void update()
     {
-        day_time += 30;
+
         update_ensolleiment();
         update_humidite();
     }

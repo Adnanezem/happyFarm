@@ -31,6 +31,7 @@ public class Market implements Subscriber
         engrais = new Engrais(100, 2);
         item_disponible.add(engrais);
         balance = starter_balance;
+        stock = new Inventaire();
 
     }
 
@@ -97,7 +98,7 @@ public class Market implements Subscriber
                 else if(quantite * o.get_prix_achat() > balance) return false;
                 o.baisser_quantiter(quantite);
                 balance -= quantite * o.get_prix_achat();
-                //rajouter a l'inventaire
+                //TODO : rajouter a l'inventaire
                 return true;
             }
         }
@@ -114,13 +115,13 @@ public class Market implements Subscriber
                 else if(quantite * o.get_prix_achat() > balance) return false;
                 o.baisser_quantiter(quantite);
                 balance -= quantite * o.get_prix_achat();
-                //rajouter a l'inventaire
+                stock.add_item(new Graine(temp.get_variete(), quantite, o.get_prix_achat()));
                 return true;
             }
         }
         return false;
     }
-    
+
     public void vendre(Item item_a_vendre, int quantite)
     {
         float benef = item_a_vendre.get_prix_vente() * quantite;

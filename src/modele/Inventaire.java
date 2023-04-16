@@ -53,7 +53,7 @@ public class Inventaire
             i++;
         }
     }
-    
+
     public boolean est_dispo(Item item_to_check, int quantite)
     {
         for (Item item : item_possedes) 
@@ -98,5 +98,20 @@ public class Inventaire
         Box temp = new Box();
         temp.add(plant_to_add);
         plant_boxes.add(temp);
+    }
+    
+    public float vendre_plante(Varietes v)
+    {
+        int i = 0;
+        for (Box b : plant_boxes) 
+        {
+            if(b.get_variete().equals(v))
+            {
+                Box temp = plant_boxes.remove(i);
+                return temp.get_prix();
+            }
+            i++;
+        }
+        return 0;
     }
 }

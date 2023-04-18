@@ -1,11 +1,11 @@
 package modele;
 
-import java.util.List;
+import java.util.Vector;
 import static java.lang.Thread.*;
 
 public class Minuteur implements Runnable
 {
-    private List<Subscriber> subscribers;
+    private Vector<Subscriber> subscribers;
     private long time_step;
     private boolean pause;
 
@@ -13,6 +13,7 @@ public class Minuteur implements Runnable
     {
         time_step = _time_step;
         pause = false;
+        subscribers = new Vector<Subscriber>();
         new Thread(this).start();
     }
 
@@ -24,6 +25,19 @@ public class Minuteur implements Runnable
         }
     }
 
+    
+    public void speed_up()
+    {
+        time_step /= 2;
+    }
+
+
+    public void slow_down()
+    {
+        time_step *= 2;
+    }
+
+
     public void pause()
     {
         pause = true;
@@ -34,8 +48,9 @@ public class Minuteur implements Runnable
     @Override
     public void run() 
     {
-        while(!pause) 
+        while(true) 
         {
+            if(pause) continue;
             try 
             {
                 sleep(time_step);
@@ -45,6 +60,7 @@ public class Minuteur implements Runnable
             {
                 e.printStackTrace();
             }
+            
         }
     }
 }

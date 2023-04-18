@@ -6,11 +6,14 @@
 package modele;
 
 
+import java.awt.Point;
+
 import modele.environnement.Case;
 import modele.environnement.CaseCultivable;
 import modele.environnement.CaseNonCultivable;
-
-import java.awt.Point;
+import modele.environnement.plantes.Plante;
+import modele.item.graines.Graine;
+import modele.meteo.SimulateurMeteo;
 
 
 public class SimulateurPotager 
@@ -19,14 +22,12 @@ public class SimulateurPotager
     public static final int SIZE_X = 20;
     public static final int SIZE_Y = 10;
 
-
     // private HashMap<Case, Point> map = new  HashMap<Case, Point>(); // permet de récupérer la position d'une entité à partir de sa référence
     private Case[][] grilleCases = new Case[SIZE_X][SIZE_Y]; // permet de récupérer une entité à partir de ses coordonnées
 
-    public SimulateurPotager(Minuteur minuteur, int humidite_initial) 
+    public SimulateurPotager(Minuteur minuteur, SimulateurMeteo _meteo) 
     {
-        init_tiles(minuteur , humidite_initial);
-
+        init_tiles(minuteur , _meteo);
     }
 
 
@@ -36,7 +37,7 @@ public class SimulateurPotager
         return grilleCases;
     }
     
-    private void init_tiles(Minuteur minuteur, int humidite_initial) 
+    private void init_tiles(Minuteur minuteur, SimulateurMeteo _meteo) 
     {
 
         // murs extérieurs horizontaux
@@ -58,7 +59,7 @@ public class SimulateurPotager
         {
             for (int y = 3; y < 7; y++) 
             {
-                CaseCultivable cc = new CaseCultivable();
+                CaseCultivable cc = new CaseCultivable(_meteo);
                 addEntite(cc , x, y);
                 minuteur.add_subscriber(cc);
 
@@ -78,6 +79,21 @@ public class SimulateurPotager
     private Case objetALaPosition(Point p) 
     {
         return grilleCases[p.x][p.y];
+    }
+
+    public Plante recolter_plante(int x, int y)
+    {
+        if(grilleCases[y][x] instanceof CaseNonCultivable) return null;
+        CaseCultivable temp = (CaseCultivable) grilleCases[y][x];
+        return temp.recolter_plante();
+    }
+
+    public boolean planter(int x, int y, Graine g)
+    {
+        if(grilleCases[y][x] instanceof CaseNonCultivable) return false;
+        CaseCultivable temp = (CaseCultivable) grilleCases[y][x];
+        temp.set_plante(g);
+        return true;
     }
 
 }

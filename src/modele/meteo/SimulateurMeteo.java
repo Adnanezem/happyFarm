@@ -234,4 +234,20 @@ public class SimulateurMeteo implements Subscriber
         }
         ensoleillement = t;
     }
+
+    public boolean is_raining()
+    {
+        return pluit;
+    }
+
+    public void set_rain()
+    {
+        if(pluit)
+        {
+            pluit = false;
+            return;
+        }
+        pluit = true;
+    }
+
 }

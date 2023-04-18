@@ -6,17 +6,11 @@ import modele.environnement.plantes.Varietes;
 import modele.item.Engrais;
 import modele.item.Item;
 import modele.item.graines.Graine;
-import modele.item.outils.Hoe;
-import modele.item.outils.Instrument;
 import modele.item.outils.Outil;
-import modele.item.outils.Pickaxe;
-import modele.item.outils.Shovel;
 public class Inventaire 
 {
-    
-
     private Vector<Box> plant_boxes;
-    private Outil[] outils_disponible;
+    private Vector<Outil> outils_disponible;
     private Graine[] graines_disponible;
     private Engrais engrais;
     private Vector<Item> item_possedes;
@@ -24,23 +18,11 @@ public class Inventaire
     {
         item_possedes = new Vector<Item>();
         plant_boxes   = new Vector<Box>();
+        outils_disponible = new Vector<Outil>();
         init_graines();
-        init_outils();
         engrais = new Engrais(2, 0);
         item_possedes.add(engrais);
     }   
-    
-    private void init_outils()
-    {
-        outils_disponible    = new Outil[Instrument.values().length];
-        outils_disponible[0] = new Hoe(1 , 10 );
-        outils_disponible[1] = new Shovel(0, 15);
-        outils_disponible[2] = new Pickaxe(0, 15);
-        for (Outil o : outils_disponible) 
-        {
-            item_possedes.add(o);    
-        }
-    }
 
     private void init_graines()
     {
@@ -72,11 +54,19 @@ public class Inventaire
 
     public void add_item(Item item_to_add)
     {
+        if(item_to_add instanceof Outil)
+        {
+            Outil temp = (Outil) item_to_add;
+            outils_disponible.add(temp);
+            item_possedes.add(temp);
+            return;
+        }
         for (Item item : item_possedes) 
         {
             if(item.getClass().equals(item_to_add.getClass()))
             {
                 item.ajouter_quantite(item_to_add.get_quantite());
+                return;
             }   
         }
     }
@@ -100,18 +90,35 @@ public class Inventaire
         plant_boxes.add(temp);
     }
     
-    public float vendre_plante(Varietes v)
+    public Box retirer_plante(Varietes v)
     {
         int i = 0;
         for (Box b : plant_boxes) 
         {
             if(b.get_variete().equals(v))
             {
-                Box temp = plant_boxes.remove(i);
-                return temp.get_prix();
+                return plant_boxes.remove(i);
             }
             i++;
         }
+        return null;
+    }
+
+    public float retirer_item(Item item_a_retirer, int quantite)
+    {
+        for (Item item : item_possedes) 
+        {
+            if(item.getClass().equals(item_a_retirer.getClass()))
+            {
+                item.baisser_quantiter(quantite);
+                return item.get_prix_vente() * quantite;
+            }    
+        }
         return 0;
+    }
+    
+    public Vector<Outil> get_outil_disponible()
+    {
+        return outils_disponible;
     }
 }

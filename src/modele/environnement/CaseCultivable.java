@@ -1,21 +1,25 @@
 package modele.environnement;
 
+
 import modele.Subscriber;
 
 import modele.environnement.plantes.Plante;
 import modele.environnement.plantes.legumes.*;
 import modele.environnement.plantes.fruits.*;
 import modele.item.graines.Graine;
+import modele.meteo.SimulateurMeteo;
 
 public class CaseCultivable extends Case implements Subscriber
 {
     private Plante plante;
-    protected float fertilite;
+    private float fertilite;
+    SimulateurMeteo meteo;
     
-    public CaseCultivable()
+    public CaseCultivable(SimulateurMeteo _meteo)
     {
         super();
         fertilite = 5;
+        meteo = _meteo;
     }
     public Plante get_plante() 
     {
@@ -24,17 +28,40 @@ public class CaseCultivable extends Case implements Subscriber
 
     public void update()
     {
-        if(plante != null)
-        {
-            plante.nextStep();
-        }
         if(fertilite > 0)
         {
             fertilite -= 0.2;
         }
-
+        follow_weather();
+        if(plante == null || !growth_conditions()) return;
+        
+        plante.nextStep();
+        
     }
 
+    private boolean growth_conditions()
+    {
+        if(temperature < 0) return false;
+        if(temperature > 45) return false;
+        if(humidite > 90) return false;
+        if(humidite < 10) return false;
+        if(fertilite < 0) return false;
+        return true;
+    }
+
+    private void follow_weather()
+    {
+        float humidite_bonus = 0.3f;
+        if(meteo.is_raining()) humidite_bonus = 0.7f;
+        humidite = lerp(humidite, meteo.get_humidite(), humidite_bonus);
+        temperature = lerp(temperature , meteo.get_temperature(), 0.3f);
+    }
+
+    private int lerp(int a, int b, float t) 
+    {
+        return (int) (a + (b - a) * t);
+    }
+    
     public void set_plante(Graine graine) {
         switch (graine.get_variete()) {
             case CAROTTE:
@@ -68,5 +95,14 @@ public class CaseCultivable extends Case implements Subscriber
     public float get_fertilite()
     {
         return fertilite;
+    }
+
+    public Plante recolter_plante()
+    {
+        if(plante == null ) return null;
+        Plante temp = plante;
+        plante = null;
+        //TODO : verifier qu'on ne met pas l'instance a null mais seulement cette reference là
+        return temp;
     }
 }

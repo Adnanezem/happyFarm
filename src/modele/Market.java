@@ -1,51 +1,42 @@
 package modele;
+import java.util.Vector;
+
 import modele.environnement.plantes.Varietes;
 import modele.item.Engrais;
 import modele.item.Item;
 import modele.item.graines.Graine;
 import modele.item.outils.Hoe;
-import modele.item.outils.Instrument;
 import modele.item.outils.Outil;
 import modele.item.outils.Pickaxe;
 import modele.item.outils.Shovel;
-import java.util.Vector;
 
 public class Market implements Subscriber
 {
-    private int refresh_rate;
-    private int refresh_counter;
+    //constants 
+    private float shovel_price  = 15;
+    private float hoe_price     = 10;
+    private float pickaxe_price = 10; 
+    private int refresh_rate    = 5;
+    private int refresh_counter = refresh_rate;
+
+
     private Vector<Item> item_disponible;
-    private Outil[] outils_disponible;
     private Graine[] graines_disponible;
     private Engrais engrais;
     private float balance;
     private Inventaire stock;
 
-    public Market(float starter_balance)
+    public Market(float starter_balance, Minuteur m, Inventaire _stock)
     {   
-        refresh_rate = 5;
-        refresh_counter = 0;
         item_disponible = new Vector<Item>();
-        init_outils();
         init_graines();
         engrais = new Engrais(100, 2);
         item_disponible.add(engrais);
         balance = starter_balance;
-        stock = new Inventaire();
-
+        stock = _stock;
+        m.add_subscriber(this);
     }
 
-    private void init_outils()
-    {
-        outils_disponible    = new Outil[Instrument.values().length];
-        outils_disponible[0] = new Hoe(1 , 10 );
-        outils_disponible[1] = new Shovel(1, 15);
-        outils_disponible[2] = new Pickaxe(1, 15);
-        for (Item o : outils_disponible) 
-        {
-            item_disponible.add(o);    
-        }
-    }
 
     private void init_graines()
     {
@@ -63,6 +54,8 @@ public class Market implements Subscriber
             item_disponible.add(o);    
         }
     }
+
+
     public boolean acheter(Item item_a_acheter, int quantite)
     {
         float cout = item_a_acheter.get_prix_achat() * quantite;
@@ -72,7 +65,7 @@ public class Market implements Subscriber
         }
         if(item_a_acheter instanceof Outil)
         {
-            return acheter_outil(item_a_acheter, quantite);
+            return acheter_outil(item_a_acheter);
         }
         if(item_a_acheter instanceof Graine)
         {
@@ -88,22 +81,38 @@ public class Market implements Subscriber
         }
         return true;
     }
-    private boolean acheter_outil(Item item_a_acheter, int quantite)
+    private boolean acheter_outil(Item item_a_acheter)
     {
-        for (Outil o : outils_disponible) 
+        if(item_a_acheter instanceof Shovel)
         {
-            if(o.getClass().equals(item_a_acheter.getClass()))
-            {
-                if(quantite > o.get_quantite()) return false;
-                else if(quantite * o.get_prix_achat() > balance) return false;
-                o.baisser_quantiter(quantite);
-                balance -= quantite * o.get_prix_achat();
-                //TODO : rajouter a l'inventaire
-                return true;
-            }
+            if(balance < shovel_price) return false;
+            Shovel temp = new Shovel(1 , shovel_price);
+            balance -= shovel_price;
+            stock.add_item(temp);
+            return true;
         }
+
+        if(item_a_acheter instanceof Hoe)
+        {
+            if(balance < hoe_price) return false;
+            Hoe temp = new Hoe(1 , hoe_price);
+            balance -= hoe_price;
+            stock.add_item(temp);
+            return true;
+        }
+
+        if(item_a_acheter instanceof Pickaxe)
+        {
+            if(balance < pickaxe_price) return false;
+            Pickaxe temp = new Pickaxe(1 , pickaxe_price);
+            balance -= pickaxe_price;
+            stock.add_item(temp);
+            return true;
+        }
+        
         return false;
     }
+
     private boolean acheter_graine(Item g, int quantite)
     {
         Graine temp = (Graine) g;
@@ -122,11 +131,25 @@ public class Market implements Subscriber
         return false;
     }
 
-    public void vendre(Item item_a_vendre, int quantite)
+    public boolean vendre_item(Item item_a_vendre, int quantite)
     {
-        float benef = item_a_vendre.get_prix_vente() * quantite;
+        if(item_a_vendre instanceof Outil) return false;
+        float benef = stock.retirer_item(item_a_vendre, quantite);
+        if(benef == 0)
+        {
+            return false;
+        }
         balance += benef;
-        //TODO : retirer de l'inventaire
+        return true;
+    }
+
+    public boolean vendre_plante(Varietes v )
+    {
+        Box temp = stock.retirer_plante(v);
+        float benef = temp.get_prix();
+        if(benef == 0) return false;
+        balance += benef;
+        return true;
     }
 
     public void update()

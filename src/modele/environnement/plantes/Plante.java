@@ -2,7 +2,6 @@ package modele.environnement.plantes;
 
 public abstract class Plante 
 {
-    public abstract Varietes getVariete();
     protected int niveau_croissance;
     protected EtatCroissance state;
     
@@ -12,14 +11,22 @@ public abstract class Plante
         niveau_croissance = 0;
         state = EtatCroissance.GERM;
     }
+
+    public abstract Varietes getVariete();
     public abstract float get_prix();
+    protected abstract void croissance(); 
+
     public void nextStep() 
     {
         croissance();
         verification_etat_plante();
     }
+    
+    public EtatCroissance get_etat_plante()
+    {
+        return state;
+    }
 
-    protected abstract void croissance(); 
 
     private void verification_etat_plante()
     {
@@ -33,9 +40,5 @@ public abstract class Plante
         }
     }
 
-    public EtatCroissance get_etat_plante()
-    {
-        return state;
-    }
 
 }

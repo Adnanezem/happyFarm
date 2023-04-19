@@ -30,8 +30,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 //import org.w3c.dom.events.MouseEvent;
@@ -59,9 +62,30 @@ public class Vue extends JFrame implements Runnable
     private JLabel humidLabel;
     private JLabel pluieLabel;
     
+    //panel jours :
+    private JLabel jourLabel;
+    private JLabel heureLabel;
+    private JLabel minuteLabel;
+    private JLabel saisonLabel;
+    
+    
     JComponent grilleJLabels;
     private JPanel panel;
     private JPanel panelVitesse;
+    private JSlider sliderVitesse;
+    private JPanel panelDate;
+    
+    //private JLabel item;
+    //private JLabel outils;
+    //private JLabel plantes;
+	//private JPanel infoInv;
+	
+	private JPanel panelBoutton;
+
+
+
+
+
 
     // icones affichées dans la grille
     private ImageIcon icoSalade;
@@ -108,12 +132,26 @@ public class Vue extends JFrame implements Runnable
         
         chargerLesIcones();
 
-        tempLabel = new JLabel("Température", icoTemperature, JLabel.CENTER);;
+        tempLabel = new JLabel("Température", icoTemperature, JLabel.CENTER);
         sunLabel = new JLabel("Ensoleillement", icoEnsoleillement, JLabel.CENTER);
         humidLabel = new JLabel("Humidité", icoHumidite, JLabel.CENTER);
         pluieLabel = new JLabel(null, icoPluie, JLabel.CENTER);
         panel = new JPanel(new GridLayout(1, 3, 10, 10));
-        panelVitesse = new JPanel(new GridLayout(1, 3, 20, 20));
+        jourLabel = new JLabel("Jour", JLabel.CENTER);
+        heureLabel = new JLabel("Heure", JLabel.CENTER);
+        minuteLabel = new JLabel("Minutes", JLabel.CENTER);
+        saisonLabel = new JLabel("Saison", JLabel.CENTER);
+        panelDate = new JPanel(new GridLayout(2, 2, 10, 10));
+        panelVitesse = new JPanel(new GridLayout(1, 1, 3, 3));
+        sliderVitesse = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
+        
+        //infoInv = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        //item = new JLabel("Items : 0");
+    	//outils = new JLabel("Outils : 0");
+    	//plantes = new JLabel("Outils : 0");
+    	
+    	
+        
 
         placerLesComposantsGraphiques();
         setVisible(true);
@@ -124,7 +162,7 @@ public class Vue extends JFrame implements Runnable
     	// image libre de droits utilisée pour les légumes : https://www.vecteezy.com/vector-art/2559196-bundle-of-fruits-and-vegetables-icons	
     
 
-        icoSalade = chargerIcone("Images/data.png", 0, 0, 120, 120);//chargerIcone("Images/Pacman.png");
+        icoSalade = chargerIcone("Images/data.png", 0, 0, 120, 120); //chargerIcone("Images/Pacman.png");
         icoCoco = chargerIcone("Images/data.png", 0, 3 * 390, 140, 140);
         icoOrange = chargerIcone("Images/data.png", 2 * 390, 0, 140, 140);
         icoRaisin = chargerIcone("Images/data.png", 9 * 390, 2 * 390, 140, 140);
@@ -196,9 +234,12 @@ public class Vue extends JFrame implements Runnable
         menuPlanteOutil.add(placerMenuDeroulantOutils(),BorderLayout.NORTH);
         menuPlanteOutil.add(placerMenuDeroulantGraines(),BorderLayout.NORTH);
         infos.add(menuPlanteOutil);
-        infos.add(panelInventaire(), BorderLayout.SOUTH);
-        infos.add(InfosPanelMeteo(), BorderLayout.SOUTH);
-        infos.add(panelVitesse, BorderLayout.SOUTH);
+        infos.add(sliderVitesse, BorderLayout.SOUTH);
+        infos.add(pauseSimulation(), BorderLayout.SOUTH);   
+        infos.add(panelInvMark(), BorderLayout.CENTER);
+        infos.add(InfosPanelDate(), BorderLayout.SOUTH);
+        infos.add(InfosPanelMeteo(), BorderLayout.CENTER);
+        
         
 
         // écouter les évènements
@@ -221,11 +262,16 @@ public class Vue extends JFrame implements Runnable
 
     }
     
+    
+
+
+    
+    
     //panel inventaire
-    private JPanel panelInventaire() {
+    private JPanel panelInvMark() {
 
         // Panel des boutons
-        JPanel panelBoutton = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        panelBoutton = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         JButton inv = new JButton("Inventaire", icoInventaire);
         JButton mark = new JButton("Boutique", icoMarket);
         panelBoutton.add(inv);
@@ -255,7 +301,11 @@ public class Vue extends JFrame implements Runnable
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Afficher le panel d'inventaire
+          
+     	
                 ((CardLayout) panelInfo.getLayout()).show(panelInfo, "panelInfoInventaire");
+                
+
                 
                 //System.out.println(market.);
             }
@@ -288,6 +338,8 @@ public class Vue extends JFrame implements Runnable
         iconMap.put(Varietes.PATATE, icoPatate);
         iconMap.put(Varietes.RAISIN, icoRaisin);
         iconMap.put(Varietes.TOMATE, icoTomate);
+        
+
 
         
         // Créer le menu déroulant
@@ -308,7 +360,7 @@ public class Vue extends JFrame implements Runnable
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 Component renderer = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (renderer instanceof JLabel && value instanceof Varietes) 
+                if ((renderer instanceof JLabel && value instanceof Varietes) || value instanceof Integer) 
                 {
                     JLabel label = (JLabel) renderer;
                     ImageIcon icon = iconMap.get((Varietes) value);
@@ -416,24 +468,58 @@ public class Vue extends JFrame implements Runnable
     
     
     
-    public void gererVitesse() {
+    public JPanel pauseSimulation() {
     	
     	// Initialisation des composants Swing
-    	JButton btnDecelerer = new JButton("Décélérer");
-    	JButton btnPause = new JButton("Pause");
-    	JButton btnAccelerer = new JButton("Accélérer");
+    	JButton btnPause = new JButton("Arreter la simulmation");
     	
     	 // Configuration des composants Swing et ajout au panelVitesse
-        btnDecelerer.setActionCommand("decelerer");
-        panelVitesse.add(btnDecelerer);
-        btnPause.setActionCommand("pause");
-        panelVitesse.add(btnPause);
-        btnAccelerer.setActionCommand("accelerer");
-        panelVitesse.add(btnAccelerer);
+            btnPause.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               simulation.pause_simulation();
+            }
+        });
+            panelVitesse.add(btnPause, BorderLayout.CENTER);
+            
+            
+       return panelVitesse;
         
-
-
+        
     }
+    
+    
+    
+    
+    
+    public void sliderVitesse() {
+
+    	
+
+        sliderVitesse.setMajorTickSpacing(20);
+        sliderVitesse.setMinorTickSpacing(10);
+        //sliderVitesse.setPaintTicks(true);
+        //sliderVitesse.setPaintLabels(true);
+    	
+
+        
+        sliderVitesse.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                JSlider source = (JSlider) e.getSource();
+                simulation.set_simulation(source.getValue());
+                if (!source.getValueIsAdjusting()) {
+                    int vitesse = source.getValue();
+                    simulation.set_simulation(vitesse);
+                }
+            }
+        });
+    }
+    
+    
+    
+  
+    
     
    
     
@@ -447,6 +533,18 @@ public class Vue extends JFrame implements Runnable
         return panel;
     }
     
+  //panel méteo
+    public JPanel InfosPanelDate() {
+        //ajout de chaque icône avec leur label associé.
+    	panelDate.add(jourLabel, "jour");
+    	panelDate.add(heureLabel, "heure");
+    	panelDate.add(minuteLabel, "minute");
+    	panelDate.add(saisonLabel, "saison");
+
+        return panelDate;
+    }
+    
+    
     
     
     // fonction appeler d	ans le update pour mettre a jour la méteo
@@ -458,6 +556,17 @@ public class Vue extends JFrame implements Runnable
         if(simulation.meteo.is_raining() == true) {
         	panel.add(pluieLabel);
         }
+        
+
+    }
+    
+    public void miseAJourDate() {
+
+    	jourLabel.setText(simulation.meteo.calendrier.get_day_time()+ " JOUR");
+    	heureLabel.setText(simulation.meteo.calendrier.get_day_time() + " HEURES");
+    	minuteLabel.setText(simulation.meteo.calendrier.get_day_time() + " MINUTES");
+    	saisonLabel.setText(simulation.meteo.calendrier.get_season()+"");
+
         
 
     }
@@ -588,8 +697,11 @@ public class Vue extends JFrame implements Runnable
     {
         while (simulation.get_is_running()) 
         {
+        	
             mettreAJourAffichage();
+            sliderVitesse();
             miseAJourMeteo();
+            miseAJourDate();
         }
     }
 

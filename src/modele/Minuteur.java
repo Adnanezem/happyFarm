@@ -29,6 +29,10 @@ public class Minuteur implements Runnable
         }
     }
 
+    public void set_minuteur(long vit)
+    {
+    	time_step = vit;
+    }
     
     public void speed_up()
     {
@@ -44,9 +48,12 @@ public class Minuteur implements Runnable
 
     public void pause()
     {
-        pause = true;
+        if(!pause) pause = true;
+        else 
+        {
+            pause = false;
+        }
     }
-
     public void stop_clock()
     {
         is_running = false;
@@ -68,6 +75,7 @@ public class Minuteur implements Runnable
     {
         while(is_running) 
         {
+        	System.out.print(is_running);
             if(pause) continue;
             try 
             {

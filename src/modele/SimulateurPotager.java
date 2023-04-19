@@ -122,6 +122,7 @@ public class SimulateurPotager
 
     public void labourer(int x, int y)
     {
+    	if(x == 0 || x == SIZE_X-1 || y == 0 || y == SIZE_Y-1) return;
     	if(!(grilleCases[x][y] instanceof CaseCultivable)) {
     		addEntite(new CaseCultivable(meteo), x, y);
     	}

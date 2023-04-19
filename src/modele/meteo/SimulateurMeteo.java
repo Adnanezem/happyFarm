@@ -10,7 +10,7 @@ public class SimulateurMeteo implements Subscriber
     private boolean pluit = false;
     private int rain_timer = 0;
     private boolean auto_simulate;
-    private Date calendrier;
+    public Date calendrier;
     public SimulateurMeteo(Minuteur m)
     {
 
@@ -179,6 +179,7 @@ public class SimulateurMeteo implements Subscriber
         update_humidite();
         update_temperature();
         extra_randomness();
+        if(ensoleillement > 100) ensoleillement = 100;
     }
 
     private void extra_randomness()

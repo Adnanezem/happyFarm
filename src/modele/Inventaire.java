@@ -30,7 +30,7 @@ public class Inventaire
         int i = 0;
         for (Varietes v : Varietes.values()) 
         {
-            graines_disponible[i] = new Graine(v, 1 , 1);
+            graines_disponible[i] = new Graine(v, 1000 , 1);
             item_possedes.add(graines_disponible[i]);
             i++;
         }
@@ -157,7 +157,7 @@ public class Inventaire
         }
         return 0;
     }
-    private void print_items()
+    public void print_items()
     {
         for (Item graine : item_possedes) {
             System.out.print(graine.get_quantite()+" ");
@@ -183,5 +183,29 @@ public class Inventaire
     public Graine[] get_graine_disponible()
     {
         return graines_disponible;
+    }
+    
+    
+    public Integer get_number_of_graines(Varietes v)
+    {
+        for (Item g : item_possedes) 
+        {
+            if(!(g instanceof Graine)) continue;
+            if(((Graine)g).get_variete() == v)
+            {
+                return g.get_quantite();
+            }
+        }
+        return 0;
+    }
+    public int get_total_graines()
+    {
+        int total = 0;
+        for (Item g : item_possedes) 
+        {
+            if(!(g instanceof Graine)) continue;
+            total += g.get_quantite();
+        }
+        return total;
     }
 }

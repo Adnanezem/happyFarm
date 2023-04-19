@@ -22,11 +22,11 @@ public class Simulation
     public Inventaire stock;
     public Market market;
     public boolean is_running = true;
-    private Varietes choixPlante;
-	private Instrument choixOutil;
+    public Varietes choixPlante;
+	public Instrument choixOutil;
     public Simulation()
     {
-        clock = new Minuteur(1000);
+        clock = new Minuteur(3000);
         meteo = new SimulateurMeteo(clock);   
         potager = new SimulateurPotager(clock, meteo, 20 , 10);
         stock = new Inventaire();
@@ -38,7 +38,7 @@ public class Simulation
         clock.stop_clock();
         is_running = false;
     }
-
+    
     public boolean get_is_running()
     {
         return is_running;
@@ -75,12 +75,19 @@ public class Simulation
     {
         clock.speed_up();
     }
+    
 
     public void decelerate()
     {
         clock.slow_down();
     }
 
+    public void set_simulation(long vitesse)
+    {
+    	clock.set_minuteur(vitesse);
+    }
+
+    
     //weather methods : 
     public void toggle_auto_weather()
     {
@@ -129,6 +136,16 @@ public class Simulation
     public Graine[] get_graine_in_inventory()
     {
         return stock.get_graine_disponible();
+    }
+    
+    public int get_number_of_graines(Varietes v)
+    {
+        return stock.get_number_of_graines(v);
+    }
+
+    public int get_total_graines()
+    {
+        return stock.get_total_graines();
     }
 
 

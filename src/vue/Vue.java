@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -39,6 +40,7 @@ import modele.Simulation;
 import modele.environnement.Case;
 import modele.environnement.CaseCultivable;
 import modele.environnement.CaseNonCultivable;
+import modele.environnement.plantes.EtatCroissance;
 import modele.environnement.plantes.Plante;
 import modele.environnement.plantes.Varietes;
 import modele.item.outils.Instrument;
@@ -47,6 +49,18 @@ public class Vue extends JFrame implements Runnable
 {
     private int sizeX = 20;
     private int sizeY = 10;
+    int label_width = 100;
+    int label_height = 100;
+
+    
+    //panel meteo
+    private JLabel tempLabel;
+    private JLabel sunLabel;
+    private JLabel humidLabel;
+    private JLabel pluieLabel;
+    
+    JComponent grilleJLabels;
+    private JPanel panel;
 
     // icones affichées dans la grille
     private ImageIcon icoSalade;
@@ -65,6 +79,10 @@ public class Vue extends JFrame implements Runnable
     private ImageIcon icoOutils;
     private ImageIcon icoMarket;
     private ImageIcon icoInventaire;
+    private ImageIcon icoEnsoleillement;
+    private ImageIcon icoTemperature;
+    private ImageIcon icoHumidite;
+    private ImageIcon icoPluie;
     private ImageIcon top_down_fence_ico;
     private ImageIcon side_fence_ico;
     private ImageIcon top_left_fence_ico;
@@ -79,18 +97,26 @@ public class Vue extends JFrame implements Runnable
     private Simulation simulation;
 
     
-    public Vue(Simulation simul) throws UnsupportedLookAndFeelException
+    public Vue(Simulation simul) throws UnsupportedLookAndFeelException,CloneNotSupportedException
     {
         simulation = simul;
         sizeX = simulation.get_size_x();
         sizeY = simulation.get_size_y();
-
+        
         chargerLesIcones();
+
+        tempLabel = new JLabel("Température", icoTemperature, JLabel.CENTER);;
+        sunLabel = new JLabel("Ensoleillement", icoEnsoleillement, JLabel.CENTER);
+        humidLabel = new JLabel("Humidité", icoHumidite, JLabel.CENTER);
+        pluieLabel = new JLabel(null, icoPluie, JLabel.CENTER);
+        panel = new JPanel(new GridLayout(1, 3, 10, 10));
+
         placerLesComposantsGraphiques();
+        setVisible(true);
         new Thread(this).start();
     }
 
-    private void chargerLesIcones() {
+    private void chargerLesIcones() throws CloneNotSupportedException {
     	// image libre de droits utilisée pour les légumes : https://www.vecteezy.com/vector-art/2559196-bundle-of-fruits-and-vegetables-icons	
     
 
@@ -109,7 +135,11 @@ public class Vue extends JFrame implements Runnable
         icoOutils = chargerIcone("Images/Outils.png");
         icoVide = chargerIcone("Images/Vide.png");
         icoMarket = chargerIcone("Images/Market.png");
-        icoInventaire = chargerIcone("Images/Inventaire.png");
+        icoEnsoleillement = chargerIcone("Images/Ensoleillement.png");
+        icoTemperature = chargerIcone("Images/Temperature.png");
+		icoHumidite = chargerIcone("Images/Humidite.png");
+		icoPluie = chargerIcone("Images/Pluie.png");
+		icoInventaire = chargerIcone("Images/Inventaire.png");
         top_down_fence_ico = chargerIcone("Images/top_down_fence.png");
         side_fence_ico = chargerIcone("Images/data.png");
         top_left_fence_ico = chargerIcone("Images/top_left_fence.png");
@@ -122,7 +152,7 @@ public class Vue extends JFrame implements Runnable
     }
 
 
-    private void placerLesComposantsGraphiques() throws UnsupportedLookAndFeelException {
+    private void placerLesComposantsGraphiques() throws UnsupportedLookAndFeelException, CloneNotSupportedException {
     	//Applique un theme
     	UIManager.setLookAndFeel(new NimbusLookAndFeel());
     	
@@ -136,7 +166,7 @@ public class Vue extends JFrame implements Runnable
         add(infos, BorderLayout.EAST);
  
         
-        JComponent grilleJLabels = new JPanel(new GridLayout(sizeY, sizeX)); // grilleJLabels va contenir les cases graphiques et les positionner sous la forme d'une grille
+        grilleJLabels = new JPanel(new GridLayout(sizeY, sizeX)); // grilleJLabels va contenir les cases graphiques et les positionner sous la forme d'une grille
         tabJLabel = new JLabel[sizeX][sizeY];
         int labelWidth = grilleJLabels.getWidth() / tabJLabel.length;
         int labelHeight = grilleJLabels.getHeight() / tabJLabel[0].length;
@@ -160,6 +190,7 @@ public class Vue extends JFrame implements Runnable
         menuPlanteOutil.add(placerMenuDeroulantGraines(),BorderLayout.NORTH);
         infos.add(menuPlanteOutil);
         infos.add(panelInventaire(), BorderLayout.SOUTH);
+        infos.add(InfosPanelMeteo(), BorderLayout.SOUTH);
         
 
         // écouter les évènements
@@ -181,6 +212,8 @@ public class Vue extends JFrame implements Runnable
         }
 
     }
+    
+    //panel inventaire
     private JPanel panelInventaire() {
 
         // Panel des boutons
@@ -232,6 +265,8 @@ public class Vue extends JFrame implements Runnable
         return containerPanel;
     }
 
+    
+    //fonction retournant un JComboBox appeler dans Placer elementGraphiques pour afficher un menu déroulant de graines :
     private JComboBox<Varietes> placerMenuDeroulantGraines()
     {
     	 // Créer un Map qui associe chaque élément de menu à son icône correspondante
@@ -291,7 +326,7 @@ public class Vue extends JFrame implements Runnable
     }
 
     //Fonction renvoyant le menu deroulant des outils qui va etre appeler dans placer les éléments graphiques
-    private JComboBox<Instrument> placerMenuDeroulantOutils()
+    private JComboBox<Instrument> placerMenuDeroulantOutils() throws CloneNotSupportedException
     {
 
     	
@@ -351,8 +386,18 @@ public class Vue extends JFrame implements Runnable
    	            tabJLabel[x][y].addMouseListener(new MouseAdapter() 
    	            {
    		            @Override
-   		            public void mouseClicked(MouseEvent e)
+   		            public void mouseClicked(MouseEvent e) 
    		            	{
+   		            		System.out.print(simulation.getEtatCase(xx, yy));
+   		            		if(simulation.getEtatCase(xx, yy) == EtatCroissance.MUR)
+   		            		{
+   		            			try {
+									simulation.recolter_plante(xx, yy);
+								} catch (CloneNotSupportedException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+   		            		}
    		            		simulation.utiliserOutil(xx, yy);
    		            	}
                	});
@@ -362,11 +407,50 @@ public class Vue extends JFrame implements Runnable
            
            return comboBox1;
     }
+    
+    
+    
+    
+    
+    public JPanel InfosPanelMeteo() {
+
+        
+        //ajout de chaque icône avec leur label associé.
+        panel.add(tempLabel);
+
+        panel.add(sunLabel);
+
+        panel.add(humidLabel);
+        
+
+        
+
+        return panel;
+    }
+    
+    
+    public void miseAJourMeteo() {
+
+        tempLabel.setText(simulation.meteo.get_temperature() + " °C");
+        sunLabel.setText(simulation.meteo.get_ensolleillment() + " %");
+        humidLabel.setText(simulation.meteo.get_humidite() + " %");
+        if(simulation.meteo.is_raining() == true) {
+        	panel.add(pluieLabel);
+        }
+        
+
+    }
+    
+    
+    
+    
+    
+    
     /**
      * Il y a une grille du côté du modèle ( jeu.getGrille() ) et une grille du côté de la vue (tabJLabel)
      */
     private void mettreAJourAffichage(){
-        Case[][] temp = simulation.get_plateau();
+    	Case[][] temp = simulation.get_plateau();
         for (int x = 0; x < sizeX; x++) {
             for (int y = 0; y < sizeY; y++) {
                 if (temp[x][y] instanceof CaseCultivable) { // si la grille du modèle contient un Pacman, on associe l'icône Pacman du côté de la vue
@@ -376,21 +460,21 @@ public class Vue extends JFrame implements Runnable
                     if (plante != null) {
                         switch (plante.getVariete()) {
                         	case GRAINES: return;
-                            case SALADE: tabJLabel[x][y].setIcon(icoSalade); break;
-							case CAROTTE: tabJLabel[x][y].setIcon(icoCarotte); break;
-							case COCO: tabJLabel[x][y].setIcon(icoCoco); break;
-							case COURGETTE: tabJLabel[x][y].setIcon(icoCourgette); break;
-							case ORANGE: tabJLabel[x][y].setIcon(icoOrange); break;
-							case PATATE: tabJLabel[x][y].setIcon(icoPatate); break;
-							case RAISIN: tabJLabel[x][y].setIcon(icoRaisin); break;
-							case TOMATE: tabJLabel[x][y].setIcon(icoTomate); break;
+                            case SALADE: tabJLabel[x][y].setIcon(rescale(icoSalade)); break;
+							case CAROTTE: tabJLabel[x][y].setIcon(rescale(icoCarotte)); break;
+							case COCO: tabJLabel[x][y].setIcon(rescale(icoCoco)); break;
+							case COURGETTE: tabJLabel[x][y].setIcon(rescale(icoCourgette)); break;
+							case ORANGE: tabJLabel[x][y].setIcon(rescale(icoOrange)); break;
+							case PATATE: tabJLabel[x][y].setIcon(rescale(icoPatate)); break;
+							case RAISIN: tabJLabel[x][y].setIcon(rescale(icoRaisin)); break;
+							case TOMATE: tabJLabel[x][y].setIcon(rescale(icoTomate)); break;
 						default:
 							break;
 
                         }
 
                     } else {
-                        tabJLabel[x][y].setIcon(terre_cultivable_ico);
+                        tabJLabel[x][y].setIcon(rescale(terre_cultivable_ico));
 
                     }
 
@@ -398,13 +482,13 @@ public class Vue extends JFrame implements Runnable
                     //BufferedImage bi = getImage("Images/smick.png", 0, 0, 20, 20);
                     //tabJLabel[x][y].getGraphics().drawImage(bi, 0, 0, null);
                 } else if (temp[x][y] instanceof CaseNonCultivable) {
-                    tabJLabel[x][y].setIcon(terre_non_cultivable_ico);
+                    tabJLabel[x][y].setIcon(rescale(terre_non_cultivable_ico));
                 } else {
 
-                    tabJLabel[x][y].setIcon(icoVide);
+                    tabJLabel[x][y].setIcon(rescale(icoVide));
                 }
             }
-        }
+            }
     }
 
     private ImageIcon chargerIcone(String urlIcone) {
@@ -428,6 +512,21 @@ public class Vue extends JFrame implements Runnable
         return new ImageIcon(bi.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH));
     }
 
+    
+    
+    private ImageIcon rescale(ImageIcon original)
+    {
+        label_width = grilleJLabels.getWidth() / sizeX;
+        label_height = grilleJLabels.getHeight()/sizeY;
+
+        Image original_image = original.getImage();
+        Image scaledImage = original_image.getScaledInstance( label_width , label_height, Image.SCALE_SMOOTH);
+        ImageIcon scaled_icon = new ImageIcon(scaledImage);
+        return scaled_icon;
+    }
+    
+    
+    
     private BufferedImage getSubImage(String urlIcone, int x, int y, int w, int h) {
         BufferedImage image = null;
 
@@ -453,6 +552,7 @@ public class Vue extends JFrame implements Runnable
         while (simulation.get_is_running()) 
         {
             mettreAJourAffichage();
+            miseAJourMeteo();
         }
     }
 

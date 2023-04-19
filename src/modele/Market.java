@@ -54,7 +54,7 @@ public class Market implements Subscriber
 
     private void init_graines()
     {
-        graines_disponible    = new Graine[Varietes.values().length];
+        graines_disponible    = new Graine[Varietes.values().length - 1];
         graines_disponible[0] = new Graine(Varietes.CAROTTE, 50 , 1);
         graines_disponible[1] = new Graine(Varietes.COURGETTE, 50 , 1);
         graines_disponible[2] = new Graine(Varietes.PATATE, 50 , 1);
@@ -176,7 +176,7 @@ public class Market implements Subscriber
         for (Item o : item_disponible) 
         {
             double temp = Math.random() * ( 100 - 0 );
-            if (temp < 50) 
+            if (temp < 50 && o != null) 
             {
                 o.ajouter_quantite((int) Math.random() * ( 5 - 1 ));
             }    

@@ -11,10 +11,9 @@ import java.awt.Point;
 import modele.environnement.Case;
 import modele.environnement.CaseCultivable;
 import modele.environnement.CaseNonCultivable;
+import modele.environnement.plantes.EtatCroissance;
 import modele.environnement.plantes.Plante;
-import modele.environnement.plantes.Varietes;
 import modele.item.graines.Graine;
-import modele.item.outils.Instrument;
 import modele.meteo.SimulateurMeteo;
 
 
@@ -105,10 +104,10 @@ public class SimulateurPotager
         return grilleCases[p.x][p.y];
     }
 
-    public Plante recolter_plante(int x, int y)
+    public Plante recolter_plante(int x, int y) throws CloneNotSupportedException
     {
-        if(grilleCases[y][x] instanceof CaseNonCultivable) return null;
-        CaseCultivable temp = (CaseCultivable) grilleCases[y][x];
+        if(grilleCases[x][y] instanceof CaseNonCultivable) return null;
+        CaseCultivable temp = (CaseCultivable) grilleCases[x][y];
         return temp.recolter_plante();
     }
 
@@ -123,7 +122,24 @@ public class SimulateurPotager
 
     public void labourer(int x, int y)
     {
-        addEntite(new CaseCultivable(meteo), x, y);
+    	if(!(grilleCases[x][y] instanceof CaseCultivable)) {
+    		addEntite(new CaseCultivable(meteo), x, y);
+    	}
+    }
+    
+    public void detruire(int x, int y) {
+    	if(grilleCases[x][y] instanceof CaseCultivable) {
+    		
+    		if(((CaseCultivable) grilleCases[x][y]).get_plante() != null) {
+    			
+    			if(((CaseCultivable) grilleCases[x][y]).get_plante().get_etat_plante() == EtatCroissance.POURI) {
+    				
+        			((CaseCultivable) grilleCases[x][y]).detruire();
+    			}
+    			
+
+    		}
+    	}
     }
 
 }

@@ -8,7 +8,7 @@ import vue.Vue;
 public class Controleur 
 {
 
-    public static void main(String[] args) throws UnsupportedLookAndFeelException 
+    public static void main(String[] args) throws UnsupportedLookAndFeelException, CloneNotSupportedException
     {
         Simulation simul = new Simulation();
         Vue view = new Vue(simul);  

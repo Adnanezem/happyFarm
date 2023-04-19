@@ -17,12 +17,10 @@ public class Minuteur implements Runnable
         time_step = _time_step;
         pause = false;
         subscribers = new Vector<Subscriber>();
+        new Thread(this).start();
         
     }
-    public void start()
-    {
-        new Thread(this).start();
-    }
+
     private void notify_subscribers()
     {
         for(Subscriber s : subscribers)

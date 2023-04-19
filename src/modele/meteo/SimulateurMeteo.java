@@ -178,6 +178,14 @@ public class SimulateurMeteo implements Subscriber
         update_ensoleillement();
         update_humidite();
         update_temperature();
+        extra_randomness();
+    }
+
+    private void extra_randomness()
+    {
+        ensoleillement += (Math.random() * ( 1.5 - (-1.5) ));
+        temperature += (Math.random() * ( 1.5 - (-1.5) ));
+        humidite += (Math.random() * ( 1.5 - (-1.5) ));
     }
 
     private int get_temperature_bonus_season(Saison s)

@@ -90,36 +90,38 @@ public class Date implements Subscriber
         {
             return get_day_time_autumn();
         }
+        System.out.println("season");
         return DayTime.NULL;
     }
 
     private DayTime get_day_time_winter()
     {
-        if(heure < morning_time_winter)
+        if(heure <= morning_time_winter || heure >= night_time_winter)
         {
             return DayTime.NIGHT_TIME;
         }
-        if(heure < noon_time_winter)
+        if(heure <= noon_time_winter)
         {
             return DayTime.MORNING_TIME;
         }
-        if(heure < night_time_winter)
+        if(heure <= night_time_winter)
         {
             return DayTime.NOON_TIME;
         }
+        
         return DayTime.NULL;
     }
     private DayTime get_day_time_spring()
     {
-        if(heure < morning_time_spring)
+        if(heure <= morning_time_spring || heure >= night_time_spring)
         {
             return DayTime.NIGHT_TIME;
         }
-        if(heure < noon_time_spring)
+        if(heure <= noon_time_spring)
         {
             return DayTime.MORNING_TIME;
         }
-        if(heure < night_time_spring)
+        if(heure <= night_time_spring)
         {
             return DayTime.NOON_TIME;
         }
@@ -127,15 +129,15 @@ public class Date implements Subscriber
     }
     private DayTime get_day_time_summer()
     {
-        if(heure < morning_time_summer)
+        if(heure <= morning_time_summer ||heure >= night_time_summer)
         {
             return DayTime.NIGHT_TIME;
         }
-        if(heure < noon_time_summer)
+        if(heure <= noon_time_summer)
         {
             return DayTime.MORNING_TIME;
         }
-        if(heure < night_time_summer)
+        if(heure <= night_time_summer)
         {
             return DayTime.NOON_TIME;
         }
@@ -143,15 +145,15 @@ public class Date implements Subscriber
     }
     private DayTime get_day_time_autumn()
     {
-        if(heure < morning_time_autumn)
+        if(heure <= morning_time_autumn || heure >= night_time_autumn)
         {
             return DayTime.NIGHT_TIME;
         }
-        if(heure < noon_time_autumn)
+        if(heure <= noon_time_autumn)
         {
             return DayTime.MORNING_TIME;
         }
-        if(heure < night_time_autumn)
+        if(heure <= night_time_autumn)
         {
             return DayTime.NOON_TIME;
         }

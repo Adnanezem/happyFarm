@@ -25,6 +25,8 @@ public class CaseCultivable extends Case implements Subscriber
     {
         return plante;
     }
+    
+
 
     public void update()
     {
@@ -93,17 +95,21 @@ public class CaseCultivable extends Case implements Subscriber
                 throw new IllegalArgumentException("Unknown variété ");
         }
     }
+    
+    
+    public void detruire() {
+    	plante = null;
+    }
     public float get_fertilite()
     {
         return fertilite;
     }
 
-    public Plante recolter_plante()
+    public Plante recolter_plante() throws CloneNotSupportedException 
     {
         if(plante == null ) return null;
-        Plante temp = plante;
+        Plante temp = plante.clone();
         plante = null;
-        //TODO : verifier qu'on ne met pas l'instance a null mais seulement cette reference là
         return temp;
     }
 }

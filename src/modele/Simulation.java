@@ -4,6 +4,8 @@ package modele;
 import java.util.Vector;
 
 import modele.environnement.Case;
+import modele.environnement.CaseCultivable;
+import modele.environnement.plantes.EtatCroissance;
 import modele.environnement.plantes.Plante;
 import modele.environnement.plantes.Varietes;
 import modele.item.Item;
@@ -169,6 +171,7 @@ public class Simulation
     public void planter(Graine g, int x, int y)
     {
         assert g != null;
+        if(potager.getPlateau()[x][y] == null) {return;}
         if(!stock.est_dispo(g , 1)){System.out.println("bitch"); return;}
         stock.retirer_item(g, 1);
         potager.planter(x , y , g);
@@ -178,7 +181,7 @@ public class Simulation
         return potager.getPlateau();
     }
 
-    public void recolter_plante(int x, int y)
+    public void recolter_plante(int x, int y) throws CloneNotSupportedException
     {
         Plante temp = potager.recolter_plante(x, y);
         stock.add_plante(temp);
@@ -206,6 +209,19 @@ public class Simulation
         {
             planter(new Graine(choixPlante, 1, 0) , x , y  );
         }
+
+    }
+    
+    public EtatCroissance getEtatCase(int x, int y) {
+    	Case temp = potager.getPlateau()[x][y];
+    	
+    	if(!(temp instanceof CaseCultivable)) {
+    		return null;
+    	}
+    	if(((CaseCultivable) temp).get_plante() != null){
+    		return ((CaseCultivable) temp).get_plante().get_etat_plante();
+    	}
+    	return null;
     }
 
      //fonctions qui permets de labourer une case qui est non cultivable   
@@ -216,8 +232,8 @@ public class Simulation
             switch(choixOutil) 
             {
                 case HOE: potager.labourer(x, y); break;
-                case PICKAXE: break;
-                case SHOVEL: break;
+                case PICKAXE:  break;
+                case SHOVEL: potager.detruire(x, y);break;
                 default: return; 
             }
         }

@@ -169,7 +169,7 @@ public class Simulation
     public void planter(Graine g, int x, int y)
     {
         assert g != null;
-        if(!stock.est_dispo(g , 1)) return;
+        if(!stock.est_dispo(g , 1)){System.out.println("bitch"); return;}
         stock.retirer_item(g, 1);
         potager.planter(x , y , g);
     }
@@ -196,12 +196,16 @@ public class Simulation
 
     public void actionUtilisateur(int x, int y) 
     {
+        System.out.println(choixPlante);
         if(choixOutil != null)
         {
             utiliserOutil(x, y);
             return;
         }
-        planter(new Graine(choixPlante, 1, 0) , x , y  );
+        if(choixPlante != null)
+        {
+            planter(new Graine(choixPlante, 1, 0) , x , y  );
+        }
     }
 
      //fonctions qui permets de labourer une case qui est non cultivable   

@@ -8,7 +8,7 @@ public class Coco extends Fruit
     @Override
     public Varietes getVariete() 
     {
-        return Varietes.ORANGE;
+        return Varietes.COCO;
     }
 
     @Override

@@ -38,11 +38,13 @@ public class Inventaire
 
     public boolean est_dispo(Item item_to_check, int quantite)
     {
+        print_items();
+        if(item_to_check instanceof Graine) return est_dispo_graine((Graine)item_to_check, quantite);
         for (Item item : item_possedes) 
         {
             if(item.getClass().equals(item_to_check.getClass()))
             {
-                if (item.get_quantite() == quantite) 
+                if (item.get_quantite() >= quantite) 
                 {
                     return true;    
                 }
@@ -52,6 +54,24 @@ public class Inventaire
         return false;
     }
 
+    private boolean est_dispo_graine(Graine graine, int quantite)
+    {
+        for (Item item : item_possedes) 
+        {
+            if(item instanceof Graine)
+            {
+                Graine temp = (Graine) item;
+                if(temp.get_variete() == graine.get_variete())
+                {
+                    if( temp.get_quantite() >= quantite) return true;
+                    else return false;
+                }
+
+
+            }
+        }
+        return false;
+    }
     public void add_item(Item item_to_add)
     {
         if(item_to_add instanceof Outil)
@@ -107,6 +127,7 @@ public class Inventaire
 
     public float retirer_item(Item item_a_retirer, int quantite)
     {
+        if(item_a_retirer instanceof Graine) return retirer_graine((Graine) item_a_retirer, quantite);
         for (Item item : item_possedes) 
         {
             if(item.getClass().equals(item_a_retirer.getClass()))
@@ -116,6 +137,32 @@ public class Inventaire
             }    
         }
         return 0;
+    }
+
+
+    private float retirer_graine(Graine graine, int quantite)
+    {
+        
+        for (Item item : item_possedes) 
+        {
+            if(item instanceof Graine)
+            {
+                Graine temp = (Graine) item;
+                if(temp.get_variete() == graine.get_variete())
+                {
+                    temp.baisser_quantiter(quantite);
+                    return item.get_prix_vente() * quantite;
+                }    
+            }
+        }
+        return 0;
+    }
+    private void print_items()
+    {
+        for (Item graine : item_possedes) {
+            System.out.print(graine.get_quantite()+" ");
+        }
+        System.out.println();
     }
     
     public Vector<Outil> get_outil_disponible()

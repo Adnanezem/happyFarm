@@ -1,7 +1,15 @@
 package vue;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -34,19 +42,6 @@ import modele.environnement.CaseNonCultivable;
 import modele.environnement.plantes.Plante;
 import modele.environnement.plantes.Varietes;
 import modele.item.outils.Instrument;
-
-import java.awt.CardLayout;
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-
-
-import modele.Market;
-import modele.SimulateurPotager;
 
 public class Vue extends JFrame implements Runnable
 {
@@ -126,6 +121,7 @@ public class Vue extends JFrame implements Runnable
 
     }
 
+
     private void placerLesComposantsGraphiques() throws UnsupportedLookAndFeelException {
     	//Applique un theme
     	UIManager.setLookAndFeel(new NimbusLookAndFeel());
@@ -139,17 +135,21 @@ public class Vue extends JFrame implements Runnable
         infos.setLayout(new BoxLayout(infos, BoxLayout.Y_AXIS));
         add(infos, BorderLayout.EAST);
  
-        JComponent grilleJLabels = new JPanel(new GridLayout(20, 10)); // grilleJLabels va contenir les cases graphiques et les positionner sous la forme d'une grille
-        tabJLabel = new JLabel[20][10];
+        
+        JComponent grilleJLabels = new JPanel(new GridLayout(sizeY, sizeX)); // grilleJLabels va contenir les cases graphiques et les positionner sous la forme d'une grille
+        tabJLabel = new JLabel[sizeX][sizeY];
+        int labelWidth = grilleJLabels.getWidth() / tabJLabel.length;
+        int labelHeight = grilleJLabels.getHeight() / tabJLabel[0].length;
 
+        
         for (int y = 0; y < sizeY; y++) 
         {
             for (int x = 0; x < sizeX; x++) 
             {
                 JLabel jlab = new JLabel();
                 tabJLabel[x][y] = jlab; // on conserve les cases graphiques dans tabJLabel pour avoir un accès pratique à celles-ci (voir mettreAJourAffichage() )
+                tabJLabel[x][y].setPreferredSize(new Dimension(labelWidth, labelHeight));;     
                 grilleJLabels.add(jlab);
-
             }
         }
         

@@ -114,7 +114,7 @@ public class SimulateurPotager
 
     public boolean planter(int x, int y, Graine g)
     {
-        System.out.println(x+" "+y);
+       
         if(grilleCases[x][y] instanceof CaseNonCultivable) return false;
         CaseCultivable temp = (CaseCultivable) grilleCases[x][y];
         temp.set_plante(g);

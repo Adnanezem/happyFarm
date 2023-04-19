@@ -37,6 +37,20 @@ public class Market implements Subscriber
         m.add_subscriber(this);
     }
 
+    public Vector<Item> get_item_disponible()
+    {
+        return item_disponible;
+    }
+
+    public Graine[] get_graines_disponible()
+    {
+        return graines_disponible;
+    }
+
+    public float get_balance()
+    {
+        return balance;
+    }
 
     private void init_graines()
     {

@@ -63,6 +63,7 @@ public class CaseCultivable extends Case implements Subscriber
     }
     
     public void set_plante(Graine graine) {
+        assert graine.get_variete() != null;
         switch (graine.get_variete()) {
             case CAROTTE:
                 plante = new Carrotte();
@@ -89,7 +90,7 @@ public class CaseCultivable extends Case implements Subscriber
                 plante = new Tomate();
                 break;
             default:
-                throw new IllegalArgumentException("Unknown variété: " + graine.get_variete());
+                throw new IllegalArgumentException("Unknown variété ");
         }
     }
     public float get_fertilite()

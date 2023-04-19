@@ -8,15 +8,21 @@ public class Minuteur implements Runnable
     private Vector<Subscriber> subscribers;
     private long time_step;
     private boolean pause;
+    private boolean is_running = true;
+    public int nb_subs;
 
     public Minuteur(long _time_step) 
     {
+        nb_subs = 0;
         time_step = _time_step;
         pause = false;
         subscribers = new Vector<Subscriber>();
+        
+    }
+    public void start()
+    {
         new Thread(this).start();
     }
-
     private void notify_subscribers()
     {
         for(Subscriber s : subscribers)
@@ -43,12 +49,26 @@ public class Minuteur implements Runnable
         pause = true;
     }
 
-    public void add_subscriber(Subscriber s) {subscribers.add(s);}
+    public void stop_clock()
+    {
+        is_running = false;
+    }
+
+    public void add_subscriber(Subscriber s) 
+    {
+        subscribers.add(s);
+        nb_subs++;
+    }
+
+    public boolean get_is_running()
+    {
+        return is_running;
+    }
 
     @Override
     public void run() 
     {
-        while(true) 
+        while(is_running) 
         {
             if(pause) continue;
             try 

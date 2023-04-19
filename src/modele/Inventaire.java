@@ -73,6 +73,7 @@ public class Inventaire
 
     public void add_plante(Plante plant_to_add)
     {
+        if(plant_to_add == null) return;
         for (Box b : plant_boxes) 
         {
             if(b.get_quantite() == 0)
@@ -120,5 +121,20 @@ public class Inventaire
     public Vector<Outil> get_outil_disponible()
     {
         return outils_disponible;
+    }
+
+    public Vector<Box> get_plant_boxes()
+    {
+        return plant_boxes;
+    }
+
+    public Vector<Item> get_item_disponible()
+    {
+        return item_possedes;
+    }
+
+    public Graine[] get_graine_disponible()
+    {
+        return graines_disponible;
     }
 }

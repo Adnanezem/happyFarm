@@ -61,6 +61,7 @@ public class Vue extends JFrame implements Runnable
     
     JComponent grilleJLabels;
     private JPanel panel;
+    private JPanel panelVitesse;
 
     // icones affichées dans la grille
     private ImageIcon icoSalade;
@@ -91,6 +92,8 @@ public class Vue extends JFrame implements Runnable
     private ImageIcon top_right_fence_ico;
     private ImageIcon terre_cultivable_ico;
     private ImageIcon terre_non_cultivable_ico;
+    private ImageIcon poop_icon;
+
 
     private JLabel[][] tabJLabel;
 
@@ -110,6 +113,7 @@ public class Vue extends JFrame implements Runnable
         humidLabel = new JLabel("Humidité", icoHumidite, JLabel.CENTER);
         pluieLabel = new JLabel(null, icoPluie, JLabel.CENTER);
         panel = new JPanel(new GridLayout(1, 3, 10, 10));
+        panelVitesse = new JPanel(new GridLayout(1, 3, 20, 20));
 
         placerLesComposantsGraphiques();
         setVisible(true);
@@ -148,6 +152,9 @@ public class Vue extends JFrame implements Runnable
         top_right_fence_ico = chargerIcone("Images/top_right_fence.png");
         terre_cultivable_ico = chargerIcone("Images/CaseCultivable.png");
         terre_non_cultivable_ico = chargerIcone("Images/CaseNonCultivable.png");
+        poop_icon = chargerIcone("Images/poop_icon.png");
+
+        
 
     }
 
@@ -191,6 +198,7 @@ public class Vue extends JFrame implements Runnable
         infos.add(menuPlanteOutil);
         infos.add(panelInventaire(), BorderLayout.SOUTH);
         infos.add(InfosPanelMeteo(), BorderLayout.SOUTH);
+        infos.add(panelVitesse, BorderLayout.SOUTH);
         
 
         // écouter les évènements
@@ -361,8 +369,6 @@ public class Vue extends JFrame implements Runnable
                }
            });
            
-           
-           
         // Ajouter un écouteur d'événements pour récupérer l'élément sélectionné dans le menu déroulant
            comboBox1.addActionListener(new ActionListener() {
                @Override
@@ -373,8 +379,6 @@ public class Vue extends JFrame implements Runnable
                    //System.out.println("Element sélectionné : " + simulateurPotager.getChoixOutil());
                }
            });
-           
-           
            
            // écouter les évènements
            for (int y = 0; y < sizeY; y++) 
@@ -412,23 +416,40 @@ public class Vue extends JFrame implements Runnable
     
     
     
-    public JPanel InfosPanelMeteo() {
-
+    public void gererVitesse() {
+    	
+    	// Initialisation des composants Swing
+    	JButton btnDecelerer = new JButton("Décélérer");
+    	JButton btnPause = new JButton("Pause");
+    	JButton btnAccelerer = new JButton("Accélérer");
+    	
+    	 // Configuration des composants Swing et ajout au panelVitesse
+        btnDecelerer.setActionCommand("decelerer");
+        panelVitesse.add(btnDecelerer);
+        btnPause.setActionCommand("pause");
+        panelVitesse.add(btnPause);
+        btnAccelerer.setActionCommand("accelerer");
+        panelVitesse.add(btnAccelerer);
         
+
+
+    }
+    
+   
+    
+    //panel méteo
+    public JPanel InfosPanelMeteo() {
         //ajout de chaque icône avec leur label associé.
         panel.add(tempLabel);
-
         panel.add(sunLabel);
-
         panel.add(humidLabel);
-        
-
-        
 
         return panel;
     }
     
     
+    
+    // fonction appeler d	ans le update pour mettre a jour la méteo
     public void miseAJourMeteo() {
 
         tempLabel.setText(simulation.meteo.get_temperature() + " °C");
@@ -459,16 +480,16 @@ public class Vue extends JFrame implements Runnable
                     Plante plante = ((CaseCultivable) temp[x][y]).get_plante();
                     if (plante != null) {
                         switch (plante.getVariete()) {
-                        	case GRAINES: return;
-                            case SALADE: tabJLabel[x][y].setIcon(rescale(icoSalade)); break;
-							case CAROTTE: tabJLabel[x][y].setIcon(rescale(icoCarotte)); break;
-							case COCO: tabJLabel[x][y].setIcon(rescale(icoCoco)); break;
-							case COURGETTE: tabJLabel[x][y].setIcon(rescale(icoCourgette)); break;
-							case ORANGE: tabJLabel[x][y].setIcon(rescale(icoOrange)); break;
-							case PATATE: tabJLabel[x][y].setIcon(rescale(icoPatate)); break;
-							case RAISIN: tabJLabel[x][y].setIcon(rescale(icoRaisin)); break;
-							case TOMATE: tabJLabel[x][y].setIcon(rescale(icoTomate)); break;
-						default:
+		                        case GRAINES: return;
+		                        case SALADE: tabJLabel[x][y].setIcon(rescale(icoSalade , plante.get_etat_plante()) ); break;
+		                        case CAROTTE: tabJLabel[x][y].setIcon(rescale(icoCarotte , plante.get_etat_plante()) ); break;
+		                        case COCO: tabJLabel[x][y].setIcon(rescale(icoCoco , plante.get_etat_plante()) ); break;
+		                        case COURGETTE: tabJLabel[x][y].setIcon(rescale(icoCourgette , plante.get_etat_plante()) ); break;
+		                        case ORANGE: tabJLabel[x][y].setIcon(rescale(icoOrange , plante.get_etat_plante()) ); break;
+		                        case PATATE: tabJLabel[x][y].setIcon(rescale(icoPatate , plante.get_etat_plante()) ); break;
+		                        case RAISIN: tabJLabel[x][y].setIcon(rescale(icoRaisin , plante.get_etat_plante()) ); break;
+		                        case TOMATE: tabJLabel[x][y].setIcon(rescale(icoTomate , plante.get_etat_plante()) ); break;
+								default:
 							break;
 
                         }
@@ -521,6 +542,22 @@ public class Vue extends JFrame implements Runnable
 
         Image original_image = original.getImage();
         Image scaledImage = original_image.getScaledInstance( label_width , label_height, Image.SCALE_SMOOTH);
+        ImageIcon scaled_icon = new ImageIcon(scaledImage);
+        return scaled_icon;
+    }
+    
+    
+    
+    private ImageIcon rescale(ImageIcon original, EtatCroissance state)
+    {
+        label_width = grilleJLabels.getWidth() / sizeX;
+        label_height = grilleJLabels.getHeight()/sizeY;
+        float factor = 1;
+        if(state == EtatCroissance.GERM) factor = 0.7f;
+        if(state == EtatCroissance.MUR) factor = 1;
+        if(state == EtatCroissance.POURI) return rescale(poop_icon);
+        Image original_image = original.getImage();
+        Image scaledImage = original_image.getScaledInstance((int) (label_width * factor) ,(int) (label_height * factor), Image.SCALE_SMOOTH);
         ImageIcon scaled_icon = new ImageIcon(scaledImage);
         return scaled_icon;
     }

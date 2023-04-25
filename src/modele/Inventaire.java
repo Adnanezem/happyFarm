@@ -14,6 +14,8 @@ public class Inventaire
     private Graine[] graines_disponible;
     private Engrais engrais;
     private Vector<Item> item_possedes;
+    
+    //Contructeur
     public Inventaire()
     {
         item_possedes = new Vector<Item>();
@@ -23,7 +25,8 @@ public class Inventaire
         engrais = new Engrais(2, 0);
         item_possedes.add(engrais);
     }   
-
+    
+    //Fonction qui initialise les graines disponibles dans l'inventaire
     private void init_graines()
     {
         graines_disponible    = new Graine[Varietes.values().length];
@@ -35,7 +38,8 @@ public class Inventaire
             i++;
         }
     }
-
+    
+    //Fonction qui renvoi "true" si une quantité d'un item est disponible dans l'inventaire
     public boolean est_dispo(Item item_to_check, int quantite)
     {
         print_items();
@@ -53,7 +57,8 @@ public class Inventaire
         }
         return false;
     }
-
+    
+    //Fonction qui renvoi "true" si une quantité d'une graine est disponible dans l'inventaire
     private boolean est_dispo_graine(Graine graine, int quantite)
     {
         for (Item item : item_possedes) 
@@ -72,6 +77,8 @@ public class Inventaire
         }
         return false;
     }
+    
+    //Fonction ajoutant un item dans l'inventaire
     public void add_item(Item item_to_add)
     {
         if(item_to_add instanceof Outil)
@@ -90,7 +97,8 @@ public class Inventaire
             }   
         }
     }
-
+    
+    //Fonction ajoutant une plante dans l'inventaire
     public void add_plante(Plante plant_to_add)
     {
         if(plant_to_add == null) return;
@@ -111,6 +119,7 @@ public class Inventaire
         plant_boxes.add(temp);
     }
     
+    //Fonction retirant une plante dans l'inventaire
     public Box retirer_plante(Varietes v)
     {
         int i = 0;
@@ -124,7 +133,8 @@ public class Inventaire
         }
         return null;
     }
-
+    
+    //Fonction retirant un item dans l'inventaire
     public float retirer_item(Item item_a_retirer, int quantite)
     {
         if(item_a_retirer instanceof Graine) return retirer_graine((Graine) item_a_retirer, quantite);
@@ -138,8 +148,7 @@ public class Inventaire
         }
         return 0;
     }
-
-
+    //Fonction retirant une graine dans l'inventaire
     private float retirer_graine(Graine graine, int quantite)
     {
         
@@ -157,6 +166,7 @@ public class Inventaire
         }
         return 0;
     }
+    
     public void print_items()
     {
         for (Item graine : item_possedes) {

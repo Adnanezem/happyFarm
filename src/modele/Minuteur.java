@@ -75,7 +75,6 @@ public class Minuteur implements Runnable
     {
         while(is_running) 
         {
-        	System.out.print(is_running);
             if(pause) continue;
             try 
             {

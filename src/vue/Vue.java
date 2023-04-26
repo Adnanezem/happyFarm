@@ -108,12 +108,6 @@ public class Vue extends JFrame implements Runnable
     private ImageIcon icoTemperature;
     private ImageIcon icoHumidite;
     private ImageIcon icoPluie;
-    private ImageIcon top_down_fence_ico;
-    private ImageIcon side_fence_ico;
-    private ImageIcon top_left_fence_ico;
-    private ImageIcon bottom_right_fence_ico;
-    private ImageIcon bottom_left_fence_ico;
-    private ImageIcon top_right_fence_ico;
     private ImageIcon terre_cultivable_ico;
     private ImageIcon terre_non_cultivable_ico;
     private ImageIcon poop_icon;
@@ -182,12 +176,6 @@ public class Vue extends JFrame implements Runnable
 		icoHumidite = chargerIcone("Images/Humidite.png");
 		icoPluie = chargerIcone("Images/Pluie.png");
 		icoInventaire = chargerIcone("Images/Inventaire.png");
-        top_down_fence_ico = chargerIcone("Images/top_down_fence.png");
-        side_fence_ico = chargerIcone("Images/data.png");
-        top_left_fence_ico = chargerIcone("Images/top_left_fence.png");
-        bottom_right_fence_ico = chargerIcone("Images/bottom_right_fence.png");
-        bottom_left_fence_ico = chargerIcone("Images/bottom_left_fence.png");
-        top_right_fence_ico = chargerIcone("Images/top_right_fence.png");
         terre_cultivable_ico = chargerIcone("Images/CaseCultivable.png");
         terre_non_cultivable_ico = chargerIcone("Images/CaseNonCultivable.png");
         poop_icon = chargerIcone("Images/poop_icon.png");
@@ -450,7 +438,6 @@ public class Vue extends JFrame implements Runnable
    		            			try {
 									simulation.recolter_plante(xx, yy);
 								} catch (CloneNotSupportedException e1) {
-									// TODO Auto-generated catch block
 									e1.printStackTrace();
 								}
    		            		}
@@ -623,7 +610,6 @@ public class Vue extends JFrame implements Runnable
 
     private ImageIcon chargerIcone(String urlIcone) {
         BufferedImage image = null;
-
         try {
             image = ImageIO.read(new File(urlIcone));
         } catch (IOException ex) {

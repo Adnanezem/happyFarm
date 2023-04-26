@@ -5,9 +5,6 @@
  */
 package modele;
 
-
-import java.awt.Point;
-
 import modele.environnement.Case;
 import modele.environnement.CaseCultivable;
 import modele.environnement.CaseNonCultivable;
@@ -99,10 +96,6 @@ public class SimulateurPotager
     }
 
 
-    private Case objetALaPosition(Point p) 
-    {
-        return grilleCases[p.x][p.y];
-    }
 
     public Plante recolter_plante(int x, int y) throws CloneNotSupportedException
     {
